@@ -47,6 +47,7 @@ void fetch_weather(const char *url) {
     CURL *curl;
     CURLcode res;
     struct string s;
+    
     init_string(&s);
 
     curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -61,8 +62,81 @@ void fetch_weather(const char *url) {
         if (res != CURLE_OK) {
             fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
         } else {
-            printf("Weather Data: %s\n", s.ptr); // Raw JSON response
-            // Add JSON parsing to extract details like temperature and humidity
+            // Parse JSON response
+            struct json_object *parsed_json;
+            struct json_object *coord_obj, *weather_array, *main_obj, *wind_obj, *clouds_obj, *sys_obj;
+            struct json_object *lon_obj, *lat_obj, *temp_obj, *feels_like_obj, *humidity_obj, *weather_desc_obj;
+            struct json_object *speed_obj, *deg_obj, *all_obj, *sunrise_obj, *sunset_obj;
+
+            parsed_json = json_tokener_parse(s.ptr);
+            if (!parsed_json) {
+                fprintf(stderr, "Failed to parse JSON response.\n");
+            } else {
+                // Extract and print weather data
+                printf("\n--- Weather Report ---\n");
+
+                // Coordinates
+                json_object_object_get_ex(parsed_json, "coord", &coord_obj);
+                if (coord_obj) {
+                    json_object_object_get_ex(coord_obj, "lon", &lon_obj);
+                    json_object_object_get_ex(coord_obj, "lat", &lat_obj);
+                    printf("Coordinates: Longitude: %s, Latitude: %s\n",
+                           json_object_to_json_string(lon_obj),
+                           json_object_to_json_string(lat_obj));
+                }
+
+                // Weather description
+                json_object_object_get_ex(parsed_json, "weather", &weather_array);
+                if (weather_array) {
+                    struct json_object *weather_obj = json_object_array_get_idx(weather_array, 0);
+                    json_object_object_get_ex(weather_obj, "description", &weather_desc_obj);
+                    printf("Weather: %s\n", json_object_get_string(weather_desc_obj));
+                }
+
+                // Temperature and Humidity
+                json_object_object_get_ex(parsed_json, "main", &main_obj);
+                if (main_obj) {
+                    json_object_object_get_ex(main_obj, "temp", &temp_obj);
+                    json_object_object_get_ex(main_obj, "feels_like", &feels_like_obj);
+                    json_object_object_get_ex(main_obj, "humidity", &humidity_obj);
+                    printf("Temperature: %.2f°C\n", json_object_get_double(temp_obj));
+                    printf("Feels Like: %.2f°C\n", json_object_get_double(feels_like_obj));
+                    printf("Humidity: %d%%\n", json_object_get_int(humidity_obj));
+                }
+
+                // Wind
+                json_object_object_get_ex(parsed_json, "wind", &wind_obj);
+                if (wind_obj) {
+                    json_object_object_get_ex(wind_obj, "speed", &speed_obj);
+                    json_object_object_get_ex(wind_obj, "deg", &deg_obj);
+                    printf("Wind: %.2f m/s at %d°\n",
+                           json_object_get_double(speed_obj),
+                           json_object_get_int(deg_obj));
+                }
+
+                // Clouds
+                json_object_object_get_ex(parsed_json, "clouds", &clouds_obj);
+                if (clouds_obj) {
+                    json_object_object_get_ex(clouds_obj, "all", &all_obj);
+                    printf("Cloud Cover: %d%%\n", json_object_get_int(all_obj));
+                }
+
+                // Sunrise and Sunset
+                json_object_object_get_ex(parsed_json, "sys", &sys_obj);
+                if (sys_obj) {
+                    json_object_object_get_ex(sys_obj, "sunrise", &sunrise_obj);
+                    json_object_object_get_ex(sys_obj, "sunset", &sunset_obj);
+
+                    time_t sunrise = json_object_get_int64(sunrise_obj);
+                    time_t sunset = json_object_get_int64(sunset_obj);
+
+                    printf("Sunrise: %s", ctime(&sunrise));
+                    printf("Sunset: %s", ctime(&sunset));
+                }
+
+                printf("----------------------\n");
+                json_object_put(parsed_json); // Free JSON object
+            }
         }
 
         curl_easy_cleanup(curl);
@@ -71,6 +145,7 @@ void fetch_weather(const char *url) {
     free(s.ptr);
     curl_global_cleanup();
 }
+
 
 // Function to fetch current weather
 void get_current_weather(const char *location) {
