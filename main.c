@@ -7,7 +7,7 @@
 
 #define API_KEY "9d138ef758378bf9d63431c3d35cda61"
 #define API_URL_CURRENT "http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&units=metric"
-#define API_URL_HISTORICAL "http://api.openweathermap.org/data/2.5/onecall/timemachine?lat=%s&lon=%s&dt=%ld&appid=%s&units=metric"
+#define API_URL_HISTORICAL "http://api.openweathermap.org/data/2.5/forcast?lat=%s&lon=%s&dt=%ld&appid=%s&units=imperial"
 #define API_URL_GEOCODE "http://api.openweathermap.org/geo/1.0/direct?q=%s&appid=%s"
 
 // Structure to hold the response data
