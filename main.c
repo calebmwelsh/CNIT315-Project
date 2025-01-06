@@ -5,7 +5,7 @@
 #include <time.h>
 #include <json-c/json.h> // For JSON parsing
 
-#define API_KEY "9d138ef758378bf9d63431c3d35cda61"
+#define API_KEY "OPEN WHEATHER API KEY"
 #define API_URL_CURRENT "http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&units=imperial&lang=en"
 #define API_URL_HISTORICAL "http://api.openweathermap.org/data/2.5/forecast?lat=%s&lon=%s&dt=%ld&appid=%s&units=imperial&lang=en"
 #define API_URL_GEOCODE "http://api.openweathermap.org/geo/1.0/direct?q=%s&appid=%s"
