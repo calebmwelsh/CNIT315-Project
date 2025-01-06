@@ -34,3 +34,50 @@ To make HTTP requests, this program uses the `libcurl` library. Follow the steps
 ```bash
 sudo apt-get update
 sudo apt-get install libcurl4-openssl-dev
+```
+
+#### On Windows:
+Follow the instructions in the libcurl download page.
+
+### Step 3: Clone the Repository
+Clone the repository to your local machine:
+
+git clone [https://github.com/your-username/openweather-c.git](https://github.com/calebmwelsh/CNIT315-Project.git)
+cd CNIT315-Project
+
+### Step 4: Build the Program
+Compile the C program using gcc (or another C compiler):
+
+gcc -o main main.c -lcurl
+
+### Step 5: Configure the API Key
+In the source code (weather_program.c), replace the placeholder YOUR_API_KEY_HERE with your OpenWeather API key.
+
+#define API_KEY "YOUR_API_KEY_HERE"
+
+### Step 6: Run the Program
+Once you've compiled the program, you can run it from the terminal:
+
+./main
+
+The program will prompt you to enter a city name. After entering the city, it will display the weather information for that city.
+
+#### Example Output:
+Enter the city name: London
+Fetching weather data for London...
+Current Temperature: 15.0°C
+Weather: Clear sky
+Humidity: 65%
+
+## Usage
+- Run the program by executing the compiled executable file.
+- Input the desired city name when prompted.
+- The program will display the weather statistics (temperature, weather condition, and humidity).
+
+## Troubleshooting
+- Ensure your API_KEY is valid and properly set in the code.
+- Make sure you have an internet connection for API requests to succeed.
+- If you get errors regarding libcurl, ensure it's installed correctly and linked during compilation.
+
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
